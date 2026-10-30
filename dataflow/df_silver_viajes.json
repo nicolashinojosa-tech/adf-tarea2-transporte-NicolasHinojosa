@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -69,7 +72,10 @@
 				"          ValidacionesTarjeta = first(ValidacionesTarjeta),",
 				"          KmRecorridos = first(KmRecorridos),",
 				"          EstadoViaje = first(EstadoViaje)) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 derive(HoraProgramada = toTimestamp('1900-01-01 ' + trim(HoraProgramada), 'yyyy-MM-dd HH:mm'),",
+				"          HoraSalida = toTimestamp('1900-01-01 ' + trim(HoraSalida), 'yyyy-MM-dd HH:mm'),",
+				"          HoraLlegada = toTimestamp('1900-01-01 ' + trim(HoraLlegada), 'yyyy-MM-dd HH:mm')) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ViajeId as string,",
