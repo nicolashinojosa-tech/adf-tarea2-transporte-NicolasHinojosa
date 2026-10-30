@@ -49,7 +49,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
 				"source1 derive(ParadaHistoricaId = trim(ParadaHistoricaId),",
-				"          CodigoPublicado = iif(isNull(CodigoPublicado) || trim(CodigoPublicado) == 'NULL' || trim(CodigoPublicado) == '', '', trim(CodigoPublicado)),",
+				"          CodigoPublicado = iif(     isNull(CodigoPublicado) || trim(CodigoPublicado) == '',     'SIN-CODIGO',     CodigoPublicado ),",
 				"          NombreParada = trim(NombreParada),",
 				"          Zona = upper(trim(Zona)),",
 				"          Latitud = toDecimal(replace(trim(Latitud), ',', '.'), 9, 6),",
