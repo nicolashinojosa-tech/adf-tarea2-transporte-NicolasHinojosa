@@ -53,7 +53,7 @@
 				"          HoraProgramada = trim(HoraProgramada),",
 				"          HoraSalida = trim(HoraSalida),",
 				"          HoraLlegada = trim(HoraLlegada),",
-				"          ValidacionesTarjeta = toInteger(iif(isNull(ValidacionesTarjeta) || trim(ValidacionesTarjeta) == 'NULL' || trim(ValidacionesTarjeta) == '', toString(null()), trim(ValidacionesTarjeta))),",
+				"          ValidacionesTarjeta = toInteger(iif(isNull(ValidacionesTarjeta) || trim(ValidacionesTarjeta) == 'NULL' || trim(ValidacionesTarjeta) == '', '0', trim(ValidacionesTarjeta))),",
 				"          KmRecorridos = toDecimal(replace(trim(KmRecorridos), ',', '.'), 8, 1),",
 				"          EstadoViaje = upper(trim(EstadoViaje))) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
