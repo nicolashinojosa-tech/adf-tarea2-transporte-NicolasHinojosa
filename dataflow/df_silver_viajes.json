@@ -1,0 +1,96 @@
+{
+	"name": "df_silver_viajes",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dw_bronze_viajes",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dw_silver_viajes_sql",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ViajeId as string,",
+				"          RutaHistoricaId as string,",
+				"          VehiculoId as string,",
+				"          FechaServicio as string,",
+				"          HoraProgramada as string,",
+				"          HoraSalida as string,",
+				"          HoraLlegada as string,",
+				"          ValidacionesTarjeta as string,",
+				"          KmRecorridos as string,",
+				"          EstadoViaje as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 derive(ViajeId = concat(     toString(         iif(             locate('/', trim(FechaServicio)) > 0,             toDate(trim(FechaServicio), 'dd/MM/yyyy'),             toDate(trim(FechaServicio), 'yyyy-MM-dd')         ),         'yyyyMMdd'     ),     '-',     trim(ViajeId) ),",
+				"          RutaHistoricaId = concat(     'R-',     iif(         length(             regexReplace(                 upper(trim(RutaHistoricaId)),                 '^(RUTA |RH-|R-)',                 ''             )         ) == 1,         concat(             '0',             regexReplace(                 upper(trim(RutaHistoricaId)),                 '^(RUTA |RH-|R-)',                 ''             )         ),         regexReplace(             upper(trim(RutaHistoricaId)),             '^(RUTA |RH-|R-)',             ''         )     ) ),",
+				"          VehiculoId = concat(     'V-',     lpad(         regexReplace(             upper(trim(VehiculoId)),             '^V-',             ''         ),         3,         '0'     ) ),",
+				"          FechaServicio = iif(     locate('/', trim(FechaServicio)) > 0,     toDate(trim(FechaServicio), 'dd/MM/yyyy'),     toDate(trim(FechaServicio), 'yyyy-MM-dd') ),",
+				"          HoraProgramada = iif(     length(trim(HoraProgramada)) == 5,     concat(trim(HoraProgramada), ':00'),     right(trim(HoraProgramada), 8) ),",
+				"          HoraSalida = iif(     length(trim(HoraSalida)) == 5,     concat(trim(HoraSalida), ':00'),     right(trim(HoraSalida), 8) ),",
+				"          HoraLlegada = iif(     length(trim(HoraLlegada)) == 5,     concat(trim(HoraLlegada), ':00'),     right(trim(HoraLlegada), 8) ),",
+				"          KmRecorridos = toDecimal(     replace(trim(KmRecorridos), ',', '.'),     8,     1 ),",
+				"          EstadoViaje = upper(trim(EstadoViaje)),",
+				"          ValidacionesTarjeta = toInteger(trim(ValidacionesTarjeta))) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ViajeId as string,",
+				"          RutaHistoricaId as string,",
+				"          VehiculoId as string,",
+				"          FechaServicio as date,",
+				"          HoraProgramada as timestamp,",
+				"          HoraSalida as timestamp,",
+				"          HoraLlegada as timestamp,",
+				"          ValidacionesTarjeta as integer,",
+				"          KmRecorridos as decimal(8,1),",
+				"          EstadoViaje as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ViajeId,",
+				"          RutaHistoricaId,",
+				"          VehiculoId,",
+				"          FechaServicio,",
+				"          HoraProgramada,",
+				"          HoraSalida,",
+				"          HoraLlegada,",
+				"          ValidacionesTarjeta,",
+				"          KmRecorridos,",
+				"          EstadoViaje",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
