@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -66,7 +69,8 @@
 				"          VigenciaDesde = first(VigenciaDesde),",
 				"          VigenciaHasta = first(VigenciaHasta),",
 				"          Estado = first(Estado)) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 derive(Estado = 'ACTIVO') ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ParadaHistoricaId as string,",
@@ -96,7 +100,7 @@
 				"          Longitud,",
 				"          VigenciaDesde,",
 				"          VigenciaHasta,",
-				"          Estado = Zona",
+				"          Estado",
 				"     )) ~> sink1"
 			]
 		}
