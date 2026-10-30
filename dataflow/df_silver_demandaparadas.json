@@ -27,6 +27,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -54,7 +57,16 @@
 				"          Descensos = toInteger(trim(Descensos)),",
 				"          DemandaNoAtendida = toInteger(trim(DemandaNoAtendida)),",
 				"          Metodo = upper(trim(Metodo))) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 aggregate(groupBy(DemandaId),",
+				"     FechaServicio = first(FechaServicio),",
+				"          RutaHistoricaId = first(RutaHistoricaId),",
+				"          ParadaHistoricaId = first(ParadaHistoricaId),",
+				"          Franja = first(Franja),",
+				"          ValidacionesTarjeta = first(ValidacionesTarjeta),",
+				"          Descensos = first(Descensos),",
+				"          DemandaNoAtendida = first(DemandaNoAtendida),",
+				"          Metodo = first(Metodo)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          DemandaId as string,",

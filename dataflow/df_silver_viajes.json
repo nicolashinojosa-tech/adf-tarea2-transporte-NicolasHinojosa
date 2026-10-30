@@ -27,6 +27,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -56,7 +59,17 @@
 				"          ValidacionesTarjeta = toInteger(iif(isNull(ValidacionesTarjeta) || trim(ValidacionesTarjeta) == 'NULL' || trim(ValidacionesTarjeta) == '', '0', trim(ValidacionesTarjeta))),",
 				"          KmRecorridos = toDecimal(replace(trim(KmRecorridos), ',', '.'), 8, 1),",
 				"          EstadoViaje = upper(trim(EstadoViaje))) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 aggregate(groupBy(ViajeId),",
+				"     RutaHistoricaId = first(RutaHistoricaId),",
+				"          VehiculoId = first(VehiculoId),",
+				"          FechaServicio = first(FechaServicio),",
+				"          HoraProgramada = first(HoraProgramada),",
+				"          HoraSalida = first(HoraSalida),",
+				"          HoraLlegada = first(HoraLlegada),",
+				"          ValidacionesTarjeta = first(ValidacionesTarjeta),",
+				"          KmRecorridos = first(KmRecorridos),",
+				"          EstadoViaje = first(EstadoViaje)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ViajeId as string,",

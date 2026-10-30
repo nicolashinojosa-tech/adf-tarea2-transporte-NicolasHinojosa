@@ -27,6 +27,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -52,7 +55,15 @@
 				"          FechaHoraRegistro = iif(locate('/', FechaHoraRegistro) > 0, toTimestamp(FechaHoraRegistro, 'dd/MM/yyyy'), toTimestamp(FechaHoraRegistro, 'yyyy-MM-dd')),",
 				"          VehiculoId = iif(isNull(VehiculoId) || upper(trim(VehiculoId)) == 'NULL' || trim(VehiculoId) == '', toString(null()), trim(VehiculoId)),",
 				"          Descripcion = trim(Descripcion)) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 aggregate(groupBy(IncidenteId),",
+				"     TipoIncidente = first(TipoIncidente),",
+				"          Severidad = first(Severidad),",
+				"          FechaHoraInicio = first(FechaHoraInicio),",
+				"          FechaHoraFin = first(FechaHoraFin),",
+				"          FechaHoraRegistro = first(FechaHoraRegistro),",
+				"          VehiculoId = first(VehiculoId),",
+				"          Descripcion = first(Descripcion)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          IncidenteId as string,",
@@ -73,9 +84,9 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
-				"          IncidenteId,",
+				"          IncidenteId = TipoIncidente,",
 				"          TipoIncidente,",
-				"          Severidad,",
+				"          Severidad = FechaHoraInicio,",
 				"          FechaHoraInicio,",
 				"          FechaHoraFin,",
 				"          FechaHoraRegistro,",
