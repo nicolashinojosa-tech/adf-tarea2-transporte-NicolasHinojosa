@@ -33,6 +33,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -75,7 +78,8 @@
 				"aggregate1 derive(HoraProgramada = iif(     startsWith(HoraProgramada, '1900-'),     toTimestamp(HoraProgramada, 'yyyy-MM-dd HH:mm:ss'),     toTimestamp('1900-01-01 ' + trim(HoraProgramada), 'yyyy-MM-dd HH:mm') ),",
 				"          HoraSalida = iif(     startsWith(HoraSalida, '1900-'),     toTimestamp(HoraSalida, 'yyyy-MM-dd HH:mm:ss'),     toTimestamp('1900-01-01 ' + trim(HoraSalida), 'yyyy-MM-dd HH:mm') ),",
 				"          HoraLlegada = iif(     startsWith(HoraLlegada, '1900-'),     toTimestamp(HoraLlegada, 'yyyy-MM-dd HH:mm:ss'),     toTimestamp('1900-01-01 ' + trim(HoraLlegada), 'yyyy-MM-dd HH:mm') )) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 filter(!isNull(RutaHistoricaId) && trim(RutaHistoricaId) != '') ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ViajeId as string,",
