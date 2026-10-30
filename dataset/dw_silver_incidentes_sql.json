@@ -1,0 +1,52 @@
+{
+	"name": "dw_silver_incidentes_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_transporte",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "IncidenteId",
+				"type": "varchar"
+			},
+			{
+				"name": "TipoIncidente",
+				"type": "varchar"
+			},
+			{
+				"name": "Severidad",
+				"type": "varchar"
+			},
+			{
+				"name": "FechaHoraInicio",
+				"type": "varchar"
+			},
+			{
+				"name": "FechaHoraFin",
+				"type": "varchar"
+			},
+			{
+				"name": "FechaHoraRegistro",
+				"type": "varchar"
+			},
+			{
+				"name": "VehiculoId",
+				"type": "varchar"
+			},
+			{
+				"name": "Descripcion",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "Incidentes"
+		}
+	}
+}
